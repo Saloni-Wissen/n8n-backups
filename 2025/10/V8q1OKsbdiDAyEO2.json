@@ -1,0 +1,81 @@
+{
+  "active": true,
+  "connections": {
+    "Schedule Trigger": {
+      "main": [
+        []
+      ]
+    }
+  },
+  "createdAt": "2025-10-22T17:13:50.721Z",
+  "id": "V8q1OKsbdiDAyEO2",
+  "isArchived": false,
+  "meta": {
+    "templateCredsSetupCompleted": true
+  },
+  "name": "My workflow 3",
+  "nodes": [
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {}
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        0,
+        0
+      ],
+      "id": "930a8ac3-8e5c-4c3d-9186-9d02245777f1",
+      "name": "Schedule Trigger"
+    },
+    {
+      "parameters": {
+        "filters": {},
+        "requestOptions": {}
+      },
+      "type": "n8n-nodes-base.n8n",
+      "typeVersion": 1,
+      "position": [
+        208,
+        0
+      ],
+      "id": "7bff25fe-a388-441d-9185-a6e20b5d2cc4",
+      "name": "Get many workflows",
+      "credentials": {
+        "n8nApi": {
+          "id": "lbvITbgYDQcvP91m",
+          "name": "n8n account"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "repo_name": "n8n-backups",
+  "repo_owner": "Saloni-Wissen",
+  "repo_path": "/",
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "shared": [
+    {
+      "createdAt": "2025-10-22T17:13:50.721Z",
+      "updatedAt": "2025-10-22T17:13:50.721Z",
+      "role": "workflow:owner",
+      "workflowId": "V8q1OKsbdiDAyEO2",
+      "projectId": "7loRaf8YeINnKgtz"
+    }
+  ],
+  "staticData": {
+    "node:Schedule Trigger": {
+      "recurrenceRules": []
+    }
+  },
+  "tags": [],
+  "triggerCount": 1,
+  "updatedAt": "2025-10-22T17:18:34.551Z",
+  "versionId": "4501b05b-1cdf-4aa7-9dda-aa0d1b978f9b"
+}
