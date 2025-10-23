@@ -399,7 +399,7 @@
     },
     {
       "parameters": {
-        "jsCode": "const orderJsonKeys = (jsonObj) => {\n  const ordered = {};\n  Object.keys(jsonObj).sort().forEach(key => {\n    ordered[key] = jsonObj[key];\n  });\n  return ordered;\n}\n\n// Check if file returned with content\nif (Object.keys($input.all()[0].json).includes(\"content\")) {\n  // Decode base64 content and parse JSON\n  const origWorkflow = JSON.parse(Buffer.from($input.all()[0].json.content, 'base64').toString());\n  const n8nWorkflow = $input.all()[1].json;\n  \n  // Order JSON objects\n  const orderedOriginal = orderJsonKeys(origWorkflow);\n  const orderedActual = orderJsonKeys(n8nWorkflow);\n\n  // Determine difference\n  if (JSON.stringify(orderedOriginal) === JSON.stringify(orderedActual)) {\n    $input.all()[0].json.github_status = \"same\";\n  } else {\n    $input.all()[0].json.github_status = \"different\";\n    $input.all()[0].json.n8n_data_stringy = JSON.stringify(orderedActual, null, 2);\n  }\n  $input.all()[0].json.content_decoded = orderedOriginal;\n// No file returned / new workflow\n} else if (Object.keys($input.all()[0].json).includes(\"data\")) {\n  const origWorkflow = JSON.parse($input.all()[0].json.data);\n  const n8nWorkflow = $input.all()[1].json;\n  \n  // Order JSON objects\n  const orderedOriginal = orderJsonKeys(origWorkflow);\n  const orderedActual = orderJsonKeys(n8nWorkflow);\n\n  // Determine difference\n  if (JSON.stringify(orderedOriginal) === JSON.stringify(orderedActual)) {\n    $input.all()[0].json.github_status = \"same\";\n  } else {\n    $input.all()[0].json.github_status = \"different\";\n    $input.all()[0].json.n8n_data_stringy = JSON.stringify(orderedActual, null, 2);\n  }\n  $input.all()[0].json.content_decoded = orderedOriginal;\n\n} else {\n  // Order JSON object\n  const n8nWorkflow = $input.all()[1].json;\n  const orderedActual = orderJsonKeys(n8nWorkflow);\n  \n  // Proper formatting\n  $input.all()[0].json.github_status = \"new\";\n  $input.all()[0].json.n8n_data_stringy = JSON.stringify(orderedActual, null, 2);\n}\n\n// Return items\nreturn $input.all();\n"
+        "jsCode": "const orderJsonKeys = (jsonObj) => {\n\tconst ordered = {};\n\tObject.keys(jsonObj).sort().forEach(key => {\n\t\tordered[key] = jsonObj[key];\n\t});\n\treturn ordered;\n}\n\n// Item 0: GitHub file data (from Get file data/If file too large)\nconst githubData = $input.all()[0].json;\n// Item 1: Current n8n workflow data (passed through Config)\nconst n8nWorkflow = $input.all()[1].json;\n\n// Order the current n8n workflow keys\nconst orderedActual = orderJsonKeys(n8nWorkflow);\n\n// Check if the file content was retrieved successfully from GitHub (usually via the 'content' property)\nif (Object.keys(githubData).includes(\"content\") && githubData.content !== \"\") {\n\t// --- Existing File: Content Retrieved (Base64) ---\n\n\t// Decode base64 content and parse JSON\n\tconst origWorkflow = JSON.parse(Buffer.from(githubData.content, 'base64').toString());\n\n\t// Order the original workflow keys\n\tconst orderedOriginal = orderJsonKeys(origWorkflow);\n\n\t// Determine difference\n\tif (JSON.stringify(orderedOriginal) === JSON.stringify(orderedActual)) {\n\t\tgithubData.github_status = \"same\";\n\t} else {\n\t\tgithubData.github_status = \"different\";\n\t\tgithubData.n8n_data_stringy = JSON.stringify(orderedActual, null, 2);\n\t}\n\tgithubData.content_decoded = orderedOriginal;\n\n// Check if the file returned a download_url but no content (i.e., too large for direct retrieval, usually via Get File node)\n} else if (Object.keys(githubData).includes(\"download_url\")) {\n\t// --- Existing File: Content Retrieved from 'Get File' (Download URL) ---\n\n\t// The 'Get File' node output is passed through 'Merge Items' as the content.\n\t// Check if the content is available from the 'Get File' output\n\tif (githubData.data) {\n\t\tconst origWorkflow = JSON.parse(githubData.data);\n\t\tconst orderedOriginal = orderJsonKeys(origWorkflow);\n\n\t\t// Determine difference\n\t\tif (JSON.stringify(orderedOriginal) === JSON.stringify(orderedActual)) {\n\t\t\tgithubData.github_status = \"same\";\n\t\t} else {\n\t\t\tgithubData.github_status = \"different\";\n\t\t\tgithubData.n8n_data_stringy = JSON.stringify(orderedActual, null, 2);\n\t\t}\n\t\tgithubData.content_decoded = orderedOriginal;\n\t} else {\n\t\t// Fallback for file too large but content retrieval failed or was empty, treat as new to force overwrite\n\t\tgithubData.github_status = \"new\";\n\t\tgithubData.n8n_data_stringy = JSON.stringify(orderedActual, null, 2);\n\t}\n\n\n// --- New File / Retrieval Failed (Continue On Fail) ---\n} else {\n\t// File does not exist in GitHub (or retrieval failed)\n\tgithubData.github_status = \"new\";\n\t// Proper formatting for the new file content\n\tgithubData.n8n_data_stringy = JSON.stringify(orderedActual, null, 2);\n}\n\n// The n8nWorkflow data (item 1) is not needed for the output, only the githubData (item 0) is modified and returned\n// We return the items from the merge node. The first item is the modified GitHub data.\nreturn $input.all();"
       },
       "id": "188081a9-bfdb-47f5-a497-892b9afe1e97",
       "name": "isDiffOrNew",
@@ -485,7 +485,7 @@
           "value": "={{ $('Config').item.json.repo_name }}",
           "mode": ""
         },
-        "filePath": "={{ $('Config').item.repo_path}}{{ $today.format('yyyy-LL-dd') }}/{{$('Execute Workflow Trigger').first().json.id}}.json",
+        "filePath": "={{ $('Config').item.repo_path}}{{$('Execute Workflow Trigger').first().json.id}}.json",
         "fileContent": "={{$('isDiffOrNew').item.json[\"n8n_data_stringy\"]}}",
         "commitMessage": "={{$('Execute Workflow Trigger').first().json.name}} ({{$json.github_status}})"
       },
@@ -511,15 +511,15 @@
         "operation": "edit",
         "owner": {
           "__rl": true,
-          "value": "={{ $('Config').item.repo_owner }}",
+          "value": "={{ $('Config').item.json.repo_owner }}",
           "mode": ""
         },
         "repository": {
           "__rl": true,
-          "value": "={{ $('Config').item.repo_name }}",
+          "value": "={{ $('Config').item.json.repo_name }}",
           "mode": ""
         },
-        "filePath": "={{ $('Config').item.repo_path }}{{ $today.format('yyyy-MM-dd') }}{{ $json.subPath }}{{$('Execute Workflow Trigger').first().json.id}}.json",
+        "filePath": "={{ $('Config').item.json.repo_path }}{{$('Execute Workflow Trigger').first().json.id}}.json",
         "fileContent": "={{$('isDiffOrNew').item.json[\"n8n_data_stringy\"]}}",
         "commitMessage": "={{$('Execute Workflow Trigger').first().json.name}} ({{$json.github_status}})"
       },
@@ -650,15 +650,15 @@
         "operation": "get",
         "owner": {
           "__rl": true,
-          "mode": "",
-          "value": "={{ $('Config').first().item.repo_owner }}"
+          "value": "={{ $('Config').item.json.repo_owner }}",
+          "mode": ""
         },
         "repository": {
           "__rl": true,
-          "mode": "",
-          "value": "={{ $('Config').first().item.repo_name }}"
+          "value": "={{ $('Config').item.json.repo_name }}",
+          "mode": ""
         },
-        "filePath": "={{ $('Config').first().item.repo_path }}{{ $('Execute Workflow Trigger').first().json.createdAt.split('-')[0] }}/{{ $('Execute Workflow Trigger').first().json.createdAt.split('-')[1] }}/{{$json.id}}.json",
+        "filePath": "={{ $('Config').item.json.repo_path}}{{$('Execute Workflow Trigger').first().json.id}}.json",
         "asBinaryProperty": false,
         "additionalParameters": {}
       },
@@ -700,7 +700,7 @@
               "id": "eee305e9-4164-462a-86bd-80f0d58a31ae",
               "name": "repo_path",
               "type": "string",
-              "value": "=/"
+              "value": "={{ $today.format('yyyy-LL-dd') }}/"
             }
           ]
         },
@@ -720,7 +720,7 @@
   "pinData": {},
   "repo_name": "n8n-backups",
   "repo_owner": "Saloni-Wissen",
-  "repo_path": "/",
+  "repo_path": "2025-10-23/",
   "settings": {
     "executionOrder": "v1"
   },
@@ -740,6 +740,6 @@
   },
   "tags": [],
   "triggerCount": 1,
-  "updatedAt": "2025-10-23T05:44:10.846Z",
-  "versionId": "5824c4b2-65bf-4f22-87af-759d125bee94"
+  "updatedAt": "2025-10-23T05:57:02.519Z",
+  "versionId": "be96894b-5032-4460-b7d8-70b801560ce7"
 }
