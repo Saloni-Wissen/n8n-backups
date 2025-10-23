@@ -1,0 +1,116 @@
+{
+  "active": false,
+  "connections": {
+    "Webhook1": {
+      "main": [
+        [
+          {
+            "node": "Update rows in a table1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Update rows in a table1": {
+      "main": [
+        [
+          {
+            "node": "Select rows from a table",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "createdAt": "2025-10-22T13:34:11.057Z",
+  "id": "2kqlPli9JPqegF2l",
+  "isArchived": false,
+  "meta": null,
+  "name": "My workflow",
+  "nodes": [
+    {
+      "parameters": {
+        "path": "59ca6fe4-b458-4857-9d9b-100f7de9e9d9",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.1,
+      "position": [
+        0,
+        0
+      ],
+      "id": "1c160b93-6b98-4558-ba84-e514067dd456",
+      "name": "Webhook1",
+      "webhookId": "59ca6fe4-b458-4857-9d9b-100f7de9e9d9"
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "schema": {
+          "__rl": true,
+          "mode": "list",
+          "value": "public"
+        },
+        "table": {
+          "__rl": true,
+          "mode": "list",
+          "value": ""
+        }
+      },
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.6,
+      "position": [
+        176,
+        0
+      ],
+      "id": "1de3d0cf-22b6-4061-8fa8-7a9f510340bd",
+      "name": "Update rows in a table1"
+    },
+    {
+      "parameters": {
+        "operation": "select",
+        "schema": {
+          "__rl": true,
+          "mode": "list",
+          "value": "public"
+        },
+        "table": {
+          "__rl": true,
+          "mode": "list",
+          "value": ""
+        }
+      },
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.6,
+      "position": [
+        384,
+        0
+      ],
+      "id": "4e1d64b9-b739-480c-adb4-6187f9360c11",
+      "name": "Select rows from a table"
+    }
+  ],
+  "pinData": {},
+  "repo_name": "n8n-backups",
+  "repo_owner": "Saloni-Wissen",
+  "repo_path": "/2025-10-23",
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "shared": [
+    {
+      "createdAt": "2025-10-22T13:34:11.057Z",
+      "updatedAt": "2025-10-22T13:34:11.057Z",
+      "role": "workflow:owner",
+      "workflowId": "2kqlPli9JPqegF2l",
+      "projectId": "7loRaf8YeINnKgtz"
+    }
+  ],
+  "staticData": null,
+  "tags": [],
+  "triggerCount": 0,
+  "updatedAt": "2025-10-22T13:34:11.057Z",
+  "versionId": "e0b0bf65-893f-499d-912b-3bbbca6f22c7"
+}
