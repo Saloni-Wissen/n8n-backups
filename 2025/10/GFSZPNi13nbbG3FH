@@ -1,0 +1,159 @@
+{
+  "active": true,
+  "connections": {
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "Code in JavaScript",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wait": {
+      "main": [
+        [
+          {
+            "node": "Respond to Webhook",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code in JavaScript": {
+      "main": [
+        [
+          {
+            "node": "Resume_url",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Resume_url": {
+      "main": [
+        [
+          {
+            "node": "Wait",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "createdAt": "2025-10-22T13:47:59.788Z",
+  "id": "GFSZPNi13nbbG3FH",
+  "isArchived": false,
+  "meta": null,
+  "name": "hitl-demo",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "hitl",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.1,
+      "position": [
+        0,
+        0
+      ],
+      "id": "e910c6d5-d984-4fbe-a2b9-9093aa457566",
+      "name": "Webhook",
+      "webhookId": "ac34c155-477b-4923-98e8-ec856439901e"
+    },
+    {
+      "parameters": {
+        "resume": "webhook",
+        "httpMethod": "POST",
+        "limitWaitTime": true,
+        "resumeAmount": 5,
+        "resumeUnit": "minutes",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        640,
+        0
+      ],
+      "id": "59484211-7d0f-4245-9326-6e2c65d44765",
+      "name": "Wait",
+      "webhookId": "009b86ac-4199-451c-819f-731544d12abb"
+    },
+    {
+      "parameters": {
+        "respondWith": "text",
+        "responseBody": "={{ $('Wait').item.json.body }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.4,
+      "position": [
+        864,
+        0
+      ],
+      "id": "61aa1595-cd80-4a78-bba3-77bb67000fa5",
+      "name": "Respond to Webhook"
+    },
+    {
+      "parameters": {
+        "jsCode": "\nreturn [\n  {\n    json: {\n      resumeUrl : $execution.resumeUrl\n    }\n  }\n];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        224,
+        0
+      ],
+      "id": "a92d9fd8-4cdb-4246-b67f-3867c4999baa",
+      "name": "Code in JavaScript"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "http://10.2.76.5:8001/api/save-resume-url",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n\"session_id\":\"{{ $('Webhook').item.json.body.session_id}}\",\n\"resume_url\":\"{{ $('Code in JavaScript').item.json.resumeUrl.replace(\"http://localhost\", \"http://host.docker.internal\") }}\"\n}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        432,
+        0
+      ],
+      "id": "df1921d2-160a-4ffe-b891-0eef4599aae7",
+      "name": "Resume_url"
+    }
+  ],
+  "pinData": {},
+  "repo_name": "n8n-backups",
+  "repo_owner": "Saloni-Wissen",
+  "repo_path": "/2025-10-23",
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "shared": [
+    {
+      "createdAt": "2025-10-22T13:47:59.788Z",
+      "updatedAt": "2025-10-22T13:47:59.788Z",
+      "role": "workflow:owner",
+      "workflowId": "GFSZPNi13nbbG3FH",
+      "projectId": "7loRaf8YeINnKgtz"
+    }
+  ],
+  "staticData": null,
+  "tags": [],
+  "triggerCount": 1,
+  "updatedAt": "2025-10-22T13:48:13.469Z",
+  "versionId": "53479fe7-4d1c-492a-8974-dcc24fff007e"
+}
