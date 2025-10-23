@@ -1,0 +1,46 @@
+{
+  "active": false,
+  "connections": {},
+  "createdAt": "2025-10-22T14:29:41.288Z",
+  "id": "N3aIw6xnRAZGd5Tb",
+  "isArchived": false,
+  "meta": {
+    "templateCredsSetupCompleted": true
+  },
+  "name": "My workflow 2",
+  "nodes": [
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.bitbucketTrigger",
+      "typeVersion": 1,
+      "position": [
+        0,
+        0
+      ],
+      "id": "ab38fe03-4051-4efb-8d7f-022687ff1b47",
+      "name": "Bitbucket Trigger",
+      "webhookId": "ece553b9-7b65-4850-a8aa-425a46834ce2"
+    }
+  ],
+  "pinData": {},
+  "repo_name": "n8n-backups",
+  "repo_owner": "Saloni-Wissen",
+  "repo_path": "/2025-10-23",
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "shared": [
+    {
+      "createdAt": "2025-10-22T14:29:41.288Z",
+      "updatedAt": "2025-10-22T14:29:41.288Z",
+      "role": "workflow:owner",
+      "workflowId": "N3aIw6xnRAZGd5Tb",
+      "projectId": "7loRaf8YeINnKgtz"
+    }
+  ],
+  "staticData": null,
+  "tags": [],
+  "triggerCount": 0,
+  "updatedAt": "2025-10-22T14:29:41.288Z",
+  "versionId": "49078470-9052-441c-ba84-94f01ce4a5ea"
+}
