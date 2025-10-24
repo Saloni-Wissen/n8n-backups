@@ -1,0 +1,333 @@
+{
+  "active": false,
+  "connections": {
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "Pause_agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code in JavaScript": {
+      "main": [
+        [
+          {
+            "node": "Update_DB",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Update_DB": {
+      "main": [
+        [
+          {
+            "node": "UI_Notification",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "UI_Notification": {
+      "main": [
+        [
+          {
+            "node": "Wait",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wait": {
+      "main": [
+        [
+          {
+            "node": "If",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If": {
+      "main": [
+        [
+          {
+            "node": "Resume_Agent",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Session_CleanUp",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Pause_agent": {
+      "main": [
+        [
+          {
+            "node": "Code in JavaScript",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "createdAt": "2025-10-22T13:32:39.661Z",
+  "id": "X6X9Qhhmv3EKy0nW",
+  "isArchived": false,
+  "meta": null,
+  "name": "HITL",
+  "nodes": [
+    {
+      "parameters": {
+        "path": "hitl",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.1,
+      "position": [
+        -1328,
+        128
+      ],
+      "id": "77e20ced-d8ea-427a-9e23-35e8b07336a4",
+      "name": "Webhook",
+      "webhookId": "fe7501c4-9504-4554-93b4-2c87038f6040"
+    },
+    {
+      "parameters": {
+        "resume": "webhook",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        -432,
+        128
+      ],
+      "id": "33e69402-eb90-4a1b-a134-492cafec1666",
+      "name": "Wait",
+      "webhookId": "009b86ac-4199-451c-819f-731544d12abb"
+    },
+    {
+      "parameters": {
+        "jsCode": "// Loop over input items and add a new field called 'myNewField' to the JSON of each one\nfor (const item of $input.all()) {\n  item.json.myNewField = 1;\n}\n\nreturn $input.all();"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -944,
+        128
+      ],
+      "id": "414fbadb-adea-4cdf-9cf8-d1107830d52d",
+      "name": "Code in JavaScript"
+    },
+    {
+      "parameters": {
+        "operation": "upsert",
+        "schema": {
+          "__rl": true,
+          "value": "iks_schema_dev",
+          "mode": "list",
+          "cachedResultName": "iks_schema_dev"
+        },
+        "table": {
+          "__rl": true,
+          "value": "prior_auth_n8n_agent_status",
+          "mode": "list",
+          "cachedResultName": "prior_auth_n8n_agent_status"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "id": 1,
+            "case_ref_id": 1234,
+            "status": "INITIALLIZED"
+          },
+          "matchingColumns": [
+            "id"
+          ],
+          "schema": [
+            {
+              "id": "id",
+              "displayName": "id",
+              "required": false,
+              "defaultMatch": true,
+              "display": true,
+              "type": "number",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "case_ref_id",
+              "displayName": "case_ref_id",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "number",
+              "canBeUsedToMatch": false
+            },
+            {
+              "id": "status",
+              "displayName": "status",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": false
+            },
+            {
+              "id": "timestamp",
+              "displayName": "timestamp",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "dateTime",
+              "canBeUsedToMatch": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.6,
+      "position": [
+        -768,
+        128
+      ],
+      "id": "4515304e-be6b-439f-b91e-d5fbf03bd89d",
+      "name": "Update_DB"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "http://10.2.76.5:8000/api/v1/send-sse",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"event_name\": \"\",\n  \"data\": {\n    \"message\": \"HITL required for {{$json.request_id}}\",\n    \"type\": \"\"\n  }\n}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        -592,
+        128
+      ],
+      "id": "169cca10-e754-42f9-aa61-e55e19e298ad",
+      "name": "UI_Notification"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "13083409-3db3-4da6-9ed7-2d8245d89ff8",
+              "leftValue": "",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "equals",
+                "name": "filter.operator.equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        -256,
+        128
+      ],
+      "id": "8d856c39-1564-41e9-b5dd-dd710735dfdd",
+      "name": "If"
+    },
+    {
+      "parameters": {
+        "url": "=http://10.2.76.5:8080/api/v1/agents/{{$json.session_id}}/resume",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        0,
+        0
+      ],
+      "id": "0b307b32-f84d-45f6-82fd-768b11d8e4d9",
+      "name": "Resume_Agent"
+    },
+    {
+      "parameters": {
+        "method": "DELETE",
+        "url": "=http://10.2.76.5:8080/api/v1/sessions/{{ $json.session_id }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        16,
+        224
+      ],
+      "id": "2c8c7fc9-6d51-4ab1-b5c4-382b125242c5",
+      "name": "Session_CleanUp"
+    },
+    {
+      "parameters": {
+        "url": "=http://10.2.76.5:8080/api/v1/agents/{{$json.session_id}}/pause",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        -1120,
+        128
+      ],
+      "id": "a9756c7a-96b0-462e-a7a4-40bc3bec34cc",
+      "name": "Pause_agent"
+    }
+  ],
+  "pinData": {},
+  "repo_name": "n8n-backups",
+  "repo_owner": "Saloni-Wissen",
+  "repo_path": "2025-10-24/",
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "shared": [
+    {
+      "createdAt": "2025-10-22T13:32:39.661Z",
+      "updatedAt": "2025-10-22T13:32:39.661Z",
+      "role": "workflow:owner",
+      "workflowId": "X6X9Qhhmv3EKy0nW",
+      "projectId": "7loRaf8YeINnKgtz"
+    }
+  ],
+  "staticData": null,
+  "tags": [],
+  "triggerCount": 0,
+  "updatedAt": "2025-10-22T13:32:39.661Z",
+  "versionId": "ad217ce7-c0d4-4997-9f45-67a1f258c244"
+}
