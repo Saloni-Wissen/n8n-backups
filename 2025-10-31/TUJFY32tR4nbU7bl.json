@@ -1,0 +1,48 @@
+{
+  "active": true,
+  "connections": {},
+  "createdAt": "2025-10-30T09:36:40.624Z",
+  "id": "TUJFY32tR4nbU7bl",
+  "isArchived": false,
+  "meta": null,
+  "name": "My workflow 3",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "summary",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.1,
+      "position": [
+        0,
+        0
+      ],
+      "id": "7108b00b-65cf-451e-a4a1-535c75a06b14",
+      "name": "Webhook",
+      "webhookId": "d569e1f6-8f65-4fa1-a78b-3e7c03804da2"
+    }
+  ],
+  "pinData": {},
+  "repo_name": "n8n-backups",
+  "repo_owner": "Saloni-Wissen",
+  "repo_path": "2025-10-31/",
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "shared": [
+    {
+      "createdAt": "2025-10-30T09:36:40.624Z",
+      "updatedAt": "2025-10-30T09:36:40.624Z",
+      "role": "workflow:owner",
+      "workflowId": "TUJFY32tR4nbU7bl",
+      "projectId": "7loRaf8YeINnKgtz"
+    }
+  ],
+  "staticData": null,
+  "tags": [],
+  "triggerCount": 1,
+  "updatedAt": "2025-10-30T09:36:46.590Z",
+  "versionId": "b2fb0ab3-10b9-4078-9626-ad7c9371883f"
+}
